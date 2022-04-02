@@ -10,5 +10,6 @@ namespace ChatBotApp.Data
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<ChatRoom> ChatRooms { get; set; }
   }
 }
