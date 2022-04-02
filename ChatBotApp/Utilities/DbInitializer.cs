@@ -8,6 +8,7 @@ namespace ChatBotApp.Utilities
   {
     public static void Initialize(ApplicationDbContext context)
     {
+      context.Database.EnsureDeleted();
       context.Database.EnsureCreated();
 
       string[] usernames = { "user1", "user2", "user3", "user4", "user5" };

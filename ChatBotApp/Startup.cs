@@ -1,5 +1,5 @@
+using ChatBotApp.Configuration;
 using ChatBotApp.Data;
-using ChatBotApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +29,8 @@ namespace ChatBotApp
           )
       );
 
-      services.AddScoped<UserService>();
+      services.AddAutoMapper(ModelsMapperConfigurator.Configure);
+      services.AddEntityServices();
 
       services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
               .AddCookie(options =>
@@ -67,7 +68,7 @@ namespace ChatBotApp
       {
         endpoints.MapControllerRoute(
                   name: "default",
-                  pattern: "{controller=Home}/{action=Index}/{id?}");
+                  pattern: "{controller=ChatRoom}/{action=Index}/{id?}");
       });
     }
   }

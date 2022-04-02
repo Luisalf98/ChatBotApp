@@ -1,0 +1,17 @@
+﻿@{
+  ViewData["Title"] = "Home Page";
+}
+
+@model IEnumerable<ChatBotApp.ViewModels.ChatRoomViewModel>
+
+@Html.ActionLink("New ChatRoom", "Create", "ChatRoom", null, new { @class = "btn btn-primary" })
+
+<div class="d-flex flex-row mt-5">
+  @if(Model != null)
+  {
+    @foreach(var chatRoom in Model)
+    {
+      @Html.ActionLink(chatRoom.Name, "Show", "ChatRoom", new { id = chatRoom.Id }, new { @class = "btn btn-success btn-sm mr-2" })      
+    }
+  }
+</div>
