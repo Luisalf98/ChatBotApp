@@ -1,0 +1,28 @@
+﻿@{
+  ViewData["Title"] = "Home Page";
+}
+
+@model ChatBotApp.Models.UserModel
+
+<div class="container">
+  <h1 class="display-4">Login</h1>
+
+  @using (Html.BeginForm(FormMethod.Post))
+  {
+    @Html.ValidationMessageFor(m => m.User, null, new { @class = "text-danger" })
+    <br />
+    <div class="form-group">
+      @Html.LabelFor(m => m.User.Username, "Username")
+      @Html.TextBoxFor(m => m.User.Username, new { @class = "form-control" })
+      @Html.ValidationMessageFor(m => m.User.Username, null, new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+      @Html.LabelFor(m => m.User.Password, "Password")
+      @Html.PasswordFor(m => m.User.Password, new { @class = "form-control" })
+      @Html.ValidationMessageFor(m => m.User.Password, null, new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+      <button class="btn btn-primary">Submit</button>
+    </div>
+  }
+</div>
