@@ -1,6 +1,8 @@
 using ChatBotApp.Authorization;
 using ChatBotApp.Configuration;
 using ChatBotApp.Data;
+using ChatBotApp.RealTime;
+using ChatBotApp.Services.Messaging;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -33,6 +35,7 @@ namespace ChatBotApp
 
       services.AddAutoMapper(ModelsMapperConfigurator.Configure);
       services.AddEntityServices();
+      services.AddSingleton<TextProcessorFactory>();
 
       // Permissions
       services.AddScoped<IAuthorizationHandler, ChatRoomAuthorizationHandler>();
@@ -54,6 +57,7 @@ namespace ChatBotApp
       });
 
       services.AddControllersWithViews();
+      services.AddSignalR();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,6 +86,7 @@ namespace ChatBotApp
         endpoints.MapControllerRoute(
                   name: "default",
                   pattern: "{controller=ChatRoom}/{action=Index}/{id?}");
+        endpoints.MapHub<MessagingHub>("/MessagingHub");
       });
     }
   }

@@ -10,7 +10,10 @@ namespace ChatBotApp.Controllers
     protected IActionResult Error(string errorMessage)
     {
       TempData["Error"] = errorMessage;
-      return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+      return View(
+        "~/Views/Shared/Error.cshtml",
+        new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }
+      );
     }
   }
 }
