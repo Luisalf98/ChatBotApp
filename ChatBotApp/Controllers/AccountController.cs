@@ -26,6 +26,7 @@ namespace ChatBotApp.Controllers
 
         var claims = new List<Claim>();
         claims.Add(new Claim(ClaimTypes.Name, model.User.Username));
+        claims.Add(new Claim(ClaimTypes.PrimarySid, model.User.Id.ToString()));
         var claimsIdentity = new ClaimsIdentity(
           claims, CookieAuthenticationDefaults.AuthenticationScheme
         );

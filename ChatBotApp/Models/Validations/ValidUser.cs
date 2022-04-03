@@ -26,6 +26,7 @@ namespace ChatBotApp.Models.Validations
       if (!PasswordHasherUtil<User>.VerifyPassword(user, user.PasswordHash, model.Password))
         return InvalidResult;
 
+      model.Id = user.Id;
       return ValidationResult.Success;
     }
   }

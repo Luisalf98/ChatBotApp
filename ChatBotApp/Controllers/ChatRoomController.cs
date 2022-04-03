@@ -1,8 +1,11 @@
 ﻿using ChatBotApp.Models;
 using ChatBotApp.Services;
+using ChatBotApp.Utilities;
+using ChatBotApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace ChatBotApp.Controllers
 {
@@ -10,16 +13,24 @@ namespace ChatBotApp.Controllers
   public class ChatRoomController : BaseController
   {
     private readonly ChatRoomService chatRoomService;
-    public ChatRoomController(ChatRoomService chatRoomService)
+    private readonly IAuthorizationService authorizationService;
+    public ChatRoomController(
+      ChatRoomService chatRoomService, IAuthorizationService authorizationService
+    )
     {
       this.chatRoomService = chatRoomService;
+      this.authorizationService = authorizationService;
     }
 
     public IActionResult Index()
     {
       try
       {
-        var model = chatRoomService.GetAll();
+        var model = new ChatRoomIndexViewModel
+        {
+          OtherChats = chatRoomService.GetOthers(User.GetId()),
+          UserChats = chatRoomService.GetAllByUserId(User.GetId())
+        };
         return View(model);
       }
       catch (Exception ex)
@@ -28,10 +39,15 @@ namespace ChatBotApp.Controllers
       }
     }
 
-    public IActionResult Show(long id)
+    public async Task<IActionResult> Show(long id)
     {
       try
       {
+        var authorizationResult = 
+          await authorizationService.AuthorizeAsync(User, id, "ChatRoomPolicy");
+        if (!authorizationResult.Succeeded)
+          return Forbid();
+
         var model = chatRoomService.GetById(id);
         if (model == null)
           return NotFound();
@@ -54,6 +70,7 @@ namespace ChatBotApp.Controllers
     {
       try
       {
+        model.UserId = User.GetId();
         if (!ModelState.IsValid || chatRoomService.Create(model) == null)
           return View(model);
         

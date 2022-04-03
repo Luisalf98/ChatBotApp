@@ -11,10 +11,16 @@ namespace ChatBotApp.Services
   public class ChatRoomService : BaseService, IValidatorService
   {
     private readonly IMapper mapper;
+    private readonly UserChatRoomService userChatRoomService;
 
-    public ChatRoomService(ApplicationDbContext context, IMapper mapper) : base(context) 
+    public ChatRoomService(
+      ApplicationDbContext context, 
+      IMapper mapper,
+      UserChatRoomService userChatRoomService
+    ) : base(context) 
     {
       this.mapper = mapper;
+      this.userChatRoomService = userChatRoomService;
     }
 
     public ChatRoomViewModel GetById(long chatRoomId)
@@ -27,11 +33,37 @@ namespace ChatBotApp.Services
       return mapper.ProjectTo<ChatRoomViewModel>(context.ChatRooms).ToList();
     }
 
+    public IEnumerable<ChatRoomViewModel> GetOthers(long userId)
+    {
+      var chatRoomIds = GetIdsByUserId(userId);
+      var chatRooms = context.ChatRooms.Where(c =>
+        !chatRoomIds.Contains(c.Id)
+      );
+
+      return mapper.ProjectTo<ChatRoomViewModel>(chatRooms).ToList();
+    }
+
+    public IEnumerable<ChatRoomViewModel> GetAllByUserId(long userId)
+    {
+      var chatRoomIds = GetIdsByUserId(userId);
+      var chatRooms = context.ChatRooms.Where(c =>
+        chatRoomIds.Contains(c.Id)
+      );
+
+      return mapper.ProjectTo<ChatRoomViewModel>(chatRooms).ToList();
+    }
+
     public ChatRoomViewModel Create(ChatRoomCreateModel model)
     {
       var chatRoom = mapper.Map<ChatRoom>(model);
       context.Add(chatRoom);
       context.SaveChanges();
+      userChatRoomService.Create(new UserChatRoomCreateModel
+      {
+        UserId = model.UserId,
+        ChatRoomId = chatRoom.Id
+      });
+      
       return mapper.Map<ChatRoomViewModel>(chatRoom);
     }
     
@@ -39,5 +71,11 @@ namespace ChatBotApp.Services
     {
       return context.ChatRooms.Find(chatRoomId) != null;
     }
+
+    public IQueryable<long> GetIdsByUserId(long userId)
+    {
+      return userChatRoomService.GetAllByUserId(userId)
+                                .Select(u => u.ChatRoomId);
+    } 
   }
 }

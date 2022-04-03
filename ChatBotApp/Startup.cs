@@ -1,6 +1,8 @@
+using ChatBotApp.Authorization;
 using ChatBotApp.Configuration;
 using ChatBotApp.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +34,9 @@ namespace ChatBotApp
       services.AddAutoMapper(ModelsMapperConfigurator.Configure);
       services.AddEntityServices();
 
+      // Permissions
+      services.AddScoped<IAuthorizationHandler, ChatRoomAuthorizationHandler>();
+
       services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
               .AddCookie(options =>
               {
@@ -39,7 +44,15 @@ namespace ChatBotApp
                 options.SlidingExpiration = true;
                 options.LoginPath = "/Account/Login";
               });
-      
+
+      services.AddAuthorization(options =>
+      {
+        options.AddPolicy("ChatRoomPolicy", policy =>
+        {
+          policy.Requirements.Add(new ChatRoomRequirement());
+        });
+      });
+
       services.AddControllersWithViews();
     }
 

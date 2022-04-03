@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ChatBotApp.Entities
@@ -10,5 +11,7 @@ namespace ChatBotApp.Entities
     public long Id { get; set; }
     [Required]
     public string Name { get; set; }
+
+    public IEnumerable<UserChatRoom> UserChatRooms { get; set; }
   }
 }

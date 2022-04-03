@@ -7,6 +7,7 @@ namespace ChatBotApp.Models
   {
     public class UserData
     {
+      public long Id { get; set; }
       [Required(AllowEmptyStrings = false)]
       public string Username { get; set; }
       [Required(AllowEmptyStrings = false)]
