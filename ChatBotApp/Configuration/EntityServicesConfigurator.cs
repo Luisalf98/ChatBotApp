@@ -10,6 +10,7 @@ namespace ChatBotApp.Configuration
       services.AddScoped<UserService>();
       services.AddScoped<ChatRoomService>();
       services.AddScoped<UserChatRoomService>();
+      services.AddScoped<ChatService>();
     }
   }
 }

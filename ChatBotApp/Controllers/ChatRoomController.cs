@@ -4,7 +4,9 @@ using ChatBotApp.Utilities;
 using ChatBotApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ChatBotApp.Controllers
@@ -13,13 +15,17 @@ namespace ChatBotApp.Controllers
   public class ChatRoomController : BaseController
   {
     private readonly ChatRoomService chatRoomService;
+    private readonly ChatService chatService;
     private readonly IAuthorizationService authorizationService;
     public ChatRoomController(
-      ChatRoomService chatRoomService, IAuthorizationService authorizationService
+      ChatRoomService chatRoomService, 
+      IAuthorizationService authorizationService,
+      ChatService chatService
     )
     {
       this.chatRoomService = chatRoomService;
       this.authorizationService = authorizationService;
+      this.chatService = chatService;
     }
 
     public IActionResult Index()
@@ -39,11 +45,11 @@ namespace ChatBotApp.Controllers
       }
     }
 
-    public async Task<IActionResult> Show(long id)
+    public async Task<IActionResult> Show(long id, int limit = 50)
     {
       try
       {
-        var authorizationResult = 
+        var authorizationResult =
           await authorizationService.AuthorizeAsync(User, id, "ChatRoomPolicy");
         if (!authorizationResult.Succeeded)
           return Forbid();
@@ -52,6 +58,10 @@ namespace ChatBotApp.Controllers
         if (model == null)
           return NotFound();
 
+        model.Messages = chatService.GetAllByChatRoomId(id)
+                                    .Take(50)
+                                    .Reverse()
+                                    .ToList();
         return View(model);
       }
       catch (Exception ex)
