@@ -19,7 +19,7 @@ namespace ChatBotApp.Models.Validations
       if (entityId == null)
         return InvalidResult;
 
-      if (entityService.IsPresent(entityId.Value))
+      if (!entityService.IsPresent(entityId.Value))
         return InvalidResult;
 
       return ValidationResult.Success;

@@ -11,6 +11,7 @@ namespace ChatBotApp.Configuration
     {
       config.CreateMap<ChatRoomCreateModel, ChatRoom>();
       config.CreateMap<ChatRoom, ChatRoomViewModel>();
+      config.CreateMap<UserChatRoomCreateModel, UserChatRoom>();
     }
   }
 }
