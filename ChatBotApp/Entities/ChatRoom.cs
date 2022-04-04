@@ -11,7 +11,5 @@ namespace ChatBotApp.Entities
     public long Id { get; set; }
     [Required]
     public string Name { get; set; }
-
-    public IEnumerable<UserChatRoom> UserChatRooms { get; set; }
   }
 }

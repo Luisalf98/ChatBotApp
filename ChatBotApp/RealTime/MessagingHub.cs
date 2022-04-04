@@ -1,14 +1,13 @@
-﻿using ChatBotApp.Models;
+﻿using ChatBotApp.Authorization;
+using ChatBotApp.Models;
 using ChatBotApp.Services.Messaging;
 using ChatBotApp.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System;
 using System.Threading.Tasks;
 
 namespace ChatBotApp.RealTime
 {
-  [Authorize]
   public class MessagingHub : Hub
   {
     private readonly IAuthorizationService authorizationService;
@@ -43,11 +42,21 @@ namespace ChatBotApp.RealTime
       {
         ChatRoomId = chatRoomId,
         Text = message,
-        Sender = Context.User.Identity.Name,
+        Sender = Context.User.Identity.Name ?? "[Bot]",
         SenderId = Context.User.GetId()
       };
     }
 
+    [ApiKey]
+    public void SendBotMessage(long chatRoomId, string text)
+    {
+      if (string.IsNullOrWhiteSpace(text)) return;
+
+      var message = messagePacket(chatRoomId, text);
+      textProcessorFactory.Create(message).Process();
+    }
+
+    [Authorize]
     public async Task SendMessage(long chatRoomId, string text)
     {
       if (string.IsNullOrWhiteSpace(text)) return;
@@ -57,6 +66,7 @@ namespace ChatBotApp.RealTime
       textProcessorFactory.Create(message).Process();
     }
 
+    [Authorize]
     public async Task SubscribeToChatRoom(long chatRoomId)
     {
       if (!(await IsUserAllowed(chatRoomId))) return;

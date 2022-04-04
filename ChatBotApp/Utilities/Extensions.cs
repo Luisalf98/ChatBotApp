@@ -6,7 +6,9 @@ namespace ChatBotApp.Utilities
   {
     public static long GetId(this ClaimsPrincipal user)
     {
-      return long.Parse(user.FindFirst(ClaimTypes.PrimarySid).Value);
+      long.TryParse(user.FindFirst(ClaimTypes.PrimarySid)?.Value ?? "-1", out long id);
+
+      return id;
     }
   }
 }
