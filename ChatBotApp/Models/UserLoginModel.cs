@@ -1,12 +1,13 @@
-﻿using ChatBotApp.Validations;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using ChatBotApp.Models.Validations;
 
 namespace ChatBotApp.Models
 {
-  public class UserModel
+  public class UserLoginModel
   {
     public class UserData
     {
+      public long Id { get; set; }
       [Required(AllowEmptyStrings = false)]
       public string Username { get; set; }
       [Required(AllowEmptyStrings = false)]

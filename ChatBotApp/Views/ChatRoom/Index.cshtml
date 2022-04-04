@@ -1,0 +1,26 @@
+﻿@{
+  ViewData["Title"] = "Home Page";
+}
+
+@model ChatBotApp.ViewModels.ChatRoomIndexViewModel
+
+@Html.ActionLink("New ChatRoom", "Create", "ChatRoom", null, new { @class = "btn btn-primary" })
+
+<h2 class="mt-3">My Chat Rooms</h2>
+<div class="d-flex flex-row mt-3">
+  @foreach(var chatRoom in Model.UserChats)
+  {
+    @Html.ActionLink(chatRoom.Name, "Show", "ChatRoom", new { id = chatRoom.Id }, new { @class = "btn btn-success btn-sm mr-2" })      
+  }
+</div>
+<h2 class="mt-3">Other Chat Rooms</h2>
+<div class="d-flex flex-row mt-3">
+  @foreach(var chatRoom in Model.OtherChats)
+  {
+    using(Html.BeginForm("Create", "UserChatRoom", FormMethod.Post))
+    {
+      @Html.Hidden("ChatRoomId", chatRoom.Id)
+      <button class="btn btn-primary btn-sm mr-2">@chatRoom.Name</button>
+    }
+  }
+</div>

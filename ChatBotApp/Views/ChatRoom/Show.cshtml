@@ -1,0 +1,43 @@
+﻿@{
+  ViewData["Title"] = "Home Page";
+}
+
+@model ChatBotApp.ViewModels.ChatRoomViewModel
+
+@Html.Hidden("username", User.Identity.Name)
+
+<h1>@Model.Name</h1>
+
+<div class="chat-container">
+  <div class="chat p-3" style="background-color: #eee;" data-chatroomid="@Model.Id">
+    @foreach(var message in Model.Messages)
+    {
+      var isMine = message.Username == User.Identity.Name;
+      <div class="d-flex @(isMine ? "justify-content-end" : "justify-content-start")" >
+        <p class="p-2 rounded @(isMine ? "bg-success" : "bg-info") text-white text-wrap text-break" style="width: fit-content; max-width: 80%;">
+          <b style="font-size: 11px;">[@message.CreatedAt]</b>
+          @if (!isMine)
+          {
+            <b>@(message.Username): </b>
+          }
+          @message.Message
+        </p>
+      </div>
+    }
+
+  </div>
+  
+  <div class="d-flex">
+    <div class="flex-fill">
+      <textarea class="form-control rounded-0" data-messagechatroomid="@Model.Id" rows="1"></textarea>
+    </div>
+    <div>
+      <button class="btn btn-primary btn-block sender px-5 rounded-0" data-buttonchatroomid="@Model.Id" type="button">Send</button>
+    </div>      
+  </div>  
+</div>
+
+@section Scripts{
+  <script src="~/js/signalr/dist/browser/signalr.js"></script>
+  <script src=~/js/chat.js></script> 
+}

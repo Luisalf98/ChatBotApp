@@ -1,6 +1,10 @@
+using ChatBotApp.Authorization;
+using ChatBotApp.Configuration;
 using ChatBotApp.Data;
-using ChatBotApp.Services;
+using ChatBotApp.RealTime;
+using ChatBotApp.Services.Messaging;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +33,12 @@ namespace ChatBotApp
           )
       );
 
-      services.AddScoped<UserService>();
+      services.AddAutoMapper(ModelsMapperConfigurator.Configure);
+      services.AddEntityServices();
+      services.AddSingleton<TextProcessorFactory>();
+
+      // Permissions
+      services.AddScoped<IAuthorizationHandler, ChatRoomAuthorizationHandler>();
 
       services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
               .AddCookie(options =>
@@ -38,8 +47,17 @@ namespace ChatBotApp
                 options.SlidingExpiration = true;
                 options.LoginPath = "/Account/Login";
               });
-      
+
+      services.AddAuthorization(options =>
+      {
+        options.AddPolicy("ChatRoomPolicy", policy =>
+        {
+          policy.Requirements.Add(new ChatRoomRequirement());
+        });
+      });
+
       services.AddControllersWithViews();
+      services.AddSignalR();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,7 +85,8 @@ namespace ChatBotApp
       {
         endpoints.MapControllerRoute(
                   name: "default",
-                  pattern: "{controller=Home}/{action=Index}/{id?}");
+                  pattern: "{controller=ChatRoom}/{action=Index}/{id?}");
+        endpoints.MapHub<MessagingHub>("/MessagingHub");
       });
     }
   }

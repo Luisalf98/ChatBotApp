@@ -9,9 +9,7 @@ namespace ChatBotApp.Services
 {
   public class UserService : BaseService
   {
-    public UserService(ApplicationDbContext context) : base(context)
-    {
-    }
+    public UserService(ApplicationDbContext context) : base(context) { }
 
     public User GetByUsername(string username, params string[] includes)
     {

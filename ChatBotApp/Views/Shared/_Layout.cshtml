@@ -11,7 +11,7 @@
   <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
       <div class="container-fluid">
-        @Html.ActionLink("ChatBotApp", "Index", "Home", null, new { @class = "navbar-brand" })
+        @Html.ActionLink("ChatBotApp", "Index", "ChatRoom", null, new { @class = "navbar-brand" })
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -20,7 +20,7 @@
           @(await Html.PartialAsync("_LoginPartial"))
           <ul class="navbar-nav flex-grow-1">
             <li class="nav-item">
-              @Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link text-dark" })
+              @Html.ActionLink("ChatRooms", "Index", "ChatRoom", null, new { @class = "nav-link text-dark" })
             </li>
           </ul>
         </div>
@@ -41,6 +41,25 @@
   <script src="~/lib/jquery/dist/jquery.min.js"></script>
   <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="~/js/site.js" asp-append-version="true"></script>
+  
+  @if(TempData["Success"] != null)
+  {
+    <div class="toast bg-success text-white" style="position: absolute; top: 10px; right: 10px;">
+      <div class="toast-body">
+        @TempData["Success"]
+      </div>
+    </div>
+  }else if(TempData["Error"] != null)
+  {
+    <div class="toast bg-danger text-white" style="position: absolute; top: 10px; right: 10px;">
+      <div class="toast-body">
+        @TempData["Error"]
+      </div>
+    </div>
+  }
+  <script>
+    $('.toast').toast({ delay: 2000 }).toast('show');
+  </script>
   @RenderSection("Scripts", required: false)
 </body>
 </html>

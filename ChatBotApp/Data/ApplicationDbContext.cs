@@ -1,5 +1,6 @@
 ﻿using ChatBotApp.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace ChatBotApp.Data
 {
@@ -10,5 +11,8 @@ namespace ChatBotApp.Data
     }
 
     public DbSet<User> Users { get; set; }
+    public DbSet<ChatRoom> ChatRooms { get; set; }
+    public DbSet<UserChatRoom> UserChatRooms { get; set; }
+    public DbSet<Chat> Chats { get; set; } 
   }
 }
